@@ -17,9 +17,9 @@ class Particle {
         position = new PVector(width / 2, height / 2);
         direction = new PVector(1, 0);
         size = 100;
-        r = 64; // ~25% of 255
-        g = 64;
-        b = 64;
+        r = 255;
+        g = 255;
+        b = 0;
         speed = 5;
         age = 0;
         alpha = 255;

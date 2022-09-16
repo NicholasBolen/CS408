@@ -20,11 +20,11 @@ void setup()
 void draw()
 {
     background(0);
-    
+
     Particle p2 = new Particle(control);
     p2.direction = new PVector(1, random(-PI/6, PI/6)).normalize(); //random
     particles.add(new Particle(p2));
-    
+
     update(particles);
 }
 
@@ -39,7 +39,9 @@ void update(ArrayList<Particle> ps)
         p.age++;
         if (p.age >= 60)
             ps.remove(p);
-        else
+        else {
+            p.g -= 4;
             p.position.add(PVector.mult(p.direction, p.speed));
+        }
     }
 }
