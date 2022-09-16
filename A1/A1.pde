@@ -1,4 +1,4 @@
-// CS408 - Assignment 1 //<>//
+// CS408 - Assignment 1
 // Nicholas Bolen
 // #200455709
 
@@ -11,7 +11,7 @@ Particle control;
 void setup()
 {
     size(800, 600);
-    frameRate(30);
+    frameRate(60);
     control = new Particle();
     particles.add(new Particle(control));
 }
@@ -20,7 +20,11 @@ void setup()
 void draw()
 {
     background(0);
-    particles.add(new Particle(control));
+    
+    Particle p2 = new Particle(control);
+    p2.direction = new PVector(1, random(-PI/6, PI/6)).normalize(); //random
+    particles.add(new Particle(p2));
+    
     update(particles);
 }
 

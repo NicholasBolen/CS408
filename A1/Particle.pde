@@ -15,7 +15,7 @@ class Particle {
     // Default constructor
     Particle() {
         position = new PVector(width / 2, height / 2);
-        direction = new PVector(1, 0); //random
+        direction = new PVector(1, 0);
         size = 100;
         r = 64; // ~25% of 255
         g = 64;
