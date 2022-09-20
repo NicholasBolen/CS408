@@ -47,7 +47,8 @@ class Particle {
         fill(r, g, b, alpha);
         rect(position.x - size/2, position.y - size/2, size, size);
         
-        /*
+        /* 3D & Shape prep
+        
         stroke(255);
         strokeWeight(5);
         PVector center = new PVector(position.x, position.y);

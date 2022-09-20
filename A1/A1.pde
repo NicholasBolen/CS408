@@ -6,6 +6,7 @@
 ArrayList<Particle> particles = new ArrayList<>();
 // Controller particle
 Particle control;
+float baseAngle = 0;;
 
 // Init
 void setup()
@@ -20,11 +21,20 @@ void setup()
 void draw()
 {
     background(0);
-    
     Particle p2 = new Particle(control);
-    p2.direction = new PVector(1, random(-PI/6, PI/6)).normalize(); //random
-    particles.add(new Particle(p2));
     
+    // Apply Z rotation of baseAngle +- 30 degrees
+    float angle = baseAngle + random(-PI/6, PI/6);
+    // Rotation matrix
+    float[][] a = {
+        {cos(angle), -sin(angle), 0},
+        {sin(angle), cos(angle), 0},
+        {0, 0, 1}
+    };
+    // Apply rotation
+    p2.direction = matrixToVec(matmul(a, p2.direction));
+    
+    particles.add(new Particle(p2));
     update(particles);
 }
 
@@ -84,21 +94,26 @@ void keyPressed()
         control.position.y++;
     
     // Speed
-    if (key == '2' && control.speed > 0)
+    if (keyCode == DOWN && control.speed > 0)
         control.speed--;
-    else if (key == '8' && control.speed < 10)
+    else if (keyCode == UP && control.speed < 10)
         control.speed++;
     
     // Base angle / movement direction
-    if (key == '4')
-        ;
-            
-    else if (key == '6')
-        ;
+    if (keyCode == LEFT)
+        baseAngle -= 0.01;
+    else if (keyCode == RIGHT)
+        baseAngle += 0.01;
     
     // Shape
     if (key == 'h' && control.shape > 0)
         control.shape -= 0.5;
     else if (key == 'H' && control.shape < 3)
         control.shape += 0.5;
+        
+    // Reset
+    if (key == '0') {
+        control = new Particle();
+        baseAngle = 0;
+    }
 }
