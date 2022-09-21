@@ -106,10 +106,10 @@ void keyPressed()
         baseAngle += 0.01;
     
     // Shape
-    if (key == 'h' && control.shape > 0)
-        control.shape -= 0.5;
-    else if (key == 'H' && control.shape < 3)
-        control.shape += 0.5;
+    if (key == 'h' && control.shape > 0.25)
+        control.shape -= 0.25;
+    else if (key == 'H' && control.shape < 4)
+        control.shape += 0.25;
         
     // Reset
     if (key == '0') {

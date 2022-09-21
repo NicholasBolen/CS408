@@ -45,32 +45,17 @@ class Particle {
     void render() {
         noStroke();
         fill(r, g, b, alpha);
-        rect(position.x - size/2, position.y - size/2, size, size);
         
-        /* 3D & Shape prep
-        
-        stroke(255);
-        strokeWeight(5);
-        PVector center = new PVector(position.x, position.y);
-        
-        // center
-        point(position.x, position.y);
-        
-        // constant corners
+        // Clockwise corner -> edge -> corner -> edge -> ... starting top left
         beginShape();
-        vertex(position.x-size/2, position.y-size/2);
-        vertex(position.x-size/2, position.y+size/2);
-        vertex(position.x+size/2, position.y+size/2);
-        vertex(position.x+size/2, position.y-size/2);
+        vertex(position.x - size/2, position.y - size/2);
+        vertex(position.x - shape*size/2, position.y);
+        vertex(position.x - size/2, position.y + size/2);
+        vertex(position.x, position.y + shape*size/2);
+        vertex(position.x + size/2, position.y + size/2);
+        vertex(position.x + shape*size/2, position.y);
+        vertex(position.x + size/2, position.y - size/2);
+        vertex(position.x, position.y - shape*size/2);
         endShape(CLOSE);
-        
-        // edge points
-        point(position.x+size/2, position.y);
-        point(position.x-size/2, position.y);
-        point(position.x, position.y+size/2);
-        point(position.x, position.y-size/2);
-        
-        triangle(position.x, position.y, position.x-size, position.y-size, position.x+size, position.y-size);
-        */
     }
 }
