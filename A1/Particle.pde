@@ -11,7 +11,7 @@ class Particle {
     int b;
     int speed;
     int age;
-    float alpha;
+    int alpha;
 
     // Default constructor
     Particle() {
@@ -45,6 +45,26 @@ class Particle {
     void render() {
         noStroke();
         fill(r, g, b, alpha);
+        
+        // Clockwise corner -> edge -> corner -> edge -> ... starting top left
+        beginShape();
+        vertex(position.x - size/2, position.y - size/2);
+        vertex(position.x - shape*size/2, position.y);
+        vertex(position.x - size/2, position.y + size/2);
+        vertex(position.x, position.y + shape*size/2);
+        vertex(position.x + size/2, position.y + size/2);
+        vertex(position.x + shape*size/2, position.y);
+        vertex(position.x + size/2, position.y - size/2);
+        vertex(position.x, position.y - shape*size/2);
+        endShape(CLOSE);
+    }
+    
+    // Draw outline function
+    void renderOutline() {
+        strokeCap(SQUARE);
+        strokeWeight(size / 10);
+        stroke(r, g, b, alpha);
+        noFill();
         
         // Clockwise corner -> edge -> corner -> edge -> ... starting top left
         beginShape();
