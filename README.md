@@ -34,3 +34,7 @@ For example, this allows me to set two size parameters (ex. sizeA = 5, sizeB = 1
 3 - Enables / disables secondary attributes (defaulted to disabled)
 
 4 - Enables / disables guide(s) (defaulted to disabled)
+
+---
+
+The before / after for my creative feature is most easily visualized in the diff for commit [4adae8c8e9ab1ff8c84281a1d1434040030069f1](https://github.com/NicholasBolen/408A1/commit/4adae8c8e9ab1ff8c84281a1d1434040030069f1), but there are also comments in my code around the applicable areas beginnning with "Create Feature".
