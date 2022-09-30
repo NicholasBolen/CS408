@@ -4,6 +4,10 @@ You may be able to run the project through the included EXE file, however if the
 
 All of the controls listed in the submission requirements are present, and should match the expected result given by the project assignemnt requirements.
 
+## IF WINDOW IS TOO LARGE FOR USER'S RESOLUTION ::
+
+Window size can be adjusted in the A1 file, simply change the `size(x, y)` function on line 15 (when opened in processing editor) to fit your needs.
+
 ## Creative Feature
 
 For my creative feature, I added another control for all parameters so that particles can be generated within a range of parameters, as opposed to just those currently selected.
@@ -37,4 +41,14 @@ For example, this allows me to set two size parameters (ex. sizeA = 5, sizeB = 1
 
 ---
 
-The before / after for my creative feature is most easily visualized in the diff for commit [4adae8c8e9ab1ff8c84281a1d1434040030069f1](https://github.com/NicholasBolen/408A1/commit/4adae8c8e9ab1ff8c84281a1d1434040030069f1), but there are also comments in my code around the applicable areas beginnning with "Create Feature".
+The before / after for my creative feature is most easily visualized in the diff for commit [4adae8c8e9ab1ff8c84281a1d1434040030069f1](https://github.com/NicholasBolen/408A1/commit/4adae8c8e9ab1ff8c84281a1d1434040030069f1), but there are also comments in my code around the applicable areas beginnning with "Create Feature". Here is a summary:
+
+The `urandom()` function was added to allow me ignore what order the values were in when trying to retrieve a random number between two ranges.
+
+There were a few additional controller variables added (`secondaryEnabled`, `guidesEnabled`, `control2`).
+
+Much was added to my `draw()` function to display the current state of the program in the top left, as well as support for randomly selecting within the range given.
+
+I also had to make changes on almost every line in my `keyPressed()` function, to support controlling either the `control` or `control2` emitters. At the end of this function, I added additional keypresses for resetting, setting edit mode (primary or secondary), toggling the secondary attribute, and toggling the guides.
+
+Finally, I also added a `renderOutline()` function to my Particle class, which is used for the guides.
