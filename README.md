@@ -1,5 +1,7 @@
 # CS408 - Assignment1
 
+Uploaded by [u/NicholasBolen](https://github.com/NicholasBolen/)
+
 You may be able to run the project through the included EXE file, however if there are any issues present with that, you can download the entire `A1` folder, and open `A1.pde` in the Processing editor which can be [downloaded here](https://processing.org/download).
 
 I have also included EXE files for linux and Windows machines, however I cannot ensure these will work without issue on everybody's system. As well, you will need to have installed Java Runtime Environment 17 as it was too large to upload to GitHub, if you attempt to run the application and it fails it will redirect you to the download page.
