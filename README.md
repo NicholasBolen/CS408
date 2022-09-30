@@ -9,11 +9,16 @@ All of the controls listed in the submission requirements are present, and shoul
 For my creative feature, I added another control for all parameters so that particles can be generated within a range of parameters, as opposed to just those currently selected.
 
 In the top left of the screen, there is some info about the currently selected mode:
-```Red box = Secondary attributes disabled,
+```
+Red box = Secondary attributes disabled,
 Green box = Secondary attributes enabled
 
 Number 1 = Currently editing primary attributes,
-Number 2 = Currently editing secondary attributes```
+Number 2 = Currently editing secondary attributes
+```
+
+I also added some guides for easier editing. When these are enabled, they will appear as outlines with the attributes of their controller. They are most easily seen when secondary attributes are enabled, and have a different colour form the primary attributes.
+
 ### Example:
 
 For example, this allows me to set two size parameters (ex. sizeA = 5, sizeB = 100), and now all generated particles will have a size randomly selected between the values of 5 and 100. 
