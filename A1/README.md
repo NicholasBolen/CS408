@@ -46,7 +46,7 @@ For example, this allows me to set two size parameters (ex. sizeA = 5, sizeB = 1
 
 ---
 
-The before / after for my creative feature is most easily visualized in the diff for commit [4adae8c8e9ab1ff8c84281a1d1434040030069f1](https://github.com/NicholasBolen/408A1/commit/4adae8c8e9ab1ff8c84281a1d1434040030069f1), but there are also comments in my code around the applicable areas beginnning with "Create Feature". Here is a summary:
+The before / after for my creative feature is most easily visualized in the diff for commit [4adae8c8e9ab1ff8c84281a1d1434040030069f1](https://github.com/NicholasBolen/408/commit/4adae8c8e9ab1ff8c84281a1d1434040030069f1), but there are also comments in my code around the applicable areas beginnning with "Create Feature". Here is a summary:
 
 The `urandom()` function was added to allow me ignore what order the values were in when trying to retrieve a random number between two ranges.
 
