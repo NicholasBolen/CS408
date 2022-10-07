@@ -8,12 +8,10 @@ String[] anim;
 PShape[] objs = new PShape[100];
 // Keyframes
 KeyFrame[][] frames = new KeyFrame[100][0]; // 1D = Object, 2D = Keyframe/timeline
-
+int animLength = 0;
 
 
 /* TODO
- * print current object info
- * bug with multiple objects
  *
  * Creative Feature
  * - looping (move init stuff to seperate function that can be called at end of draw() after anim finished?)
@@ -26,7 +24,7 @@ void setup()
 {
     size(1440, 810, P3D);
     //size(640, 360, P3D);
-    frameRate(30);
+    frameRate(60);
 
     // Camera settings
     perspective(radians(60), float(width) / float(height), 1, 1000);
@@ -48,8 +46,15 @@ void setup()
         // Store all keyframes
         else if (t[0].equals("KEYFRAME")) {
             frames[int(t[1])] = (KeyFrame[])append(frames[int(t[1])], new KeyFrame(float(subset(t, 2))));
+            if (int(t[2]) > animLength)
+                animLength = int(t[2]);
         }
     }
+
+    // Log before first key frame
+    for (int i = 0; i < objs.length; i++)
+        if (objs[i] != null)
+            println(i, frameCount, "Object does not exist");
 }
 
 // Draw each frame
@@ -101,7 +106,7 @@ void draw()
             diff.scale.add(k[0].scale);
 
             // Remove old frame
-            if (k[1].frame <= frameCount + 1)
+            if (k[1].frame <= frameCount)
                 frames[i] = (KeyFrame[])subset(k, 1);
         }
         // No animation left for this object
@@ -122,6 +127,10 @@ void draw()
         // Scaling (%)
         scale(diff.scale.x, diff.scale.y, diff.scale.z);
 
+
+        // Log object info
+        println(i, frameCount, diff.position, diff.rotation, diff.scale);
+
         // Draw object
         if (objs[i] != null)
             shape(objs[i]);
@@ -132,5 +141,12 @@ void draw()
 
         popMatrix();
         i++;
+    }
+    
+    if(frameCount >= animLength) {
+        for (i = 0; i < objs.length; i++)
+            if (objs[i] != null)
+                println(i, frameCount, "Object does not exist");
+        exit();
     }
 }
