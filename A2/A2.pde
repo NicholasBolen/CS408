@@ -5,32 +5,35 @@
 // Animation instructions
 String[] anim;
 // Objects
-PShape[] objs = new PShape[100];
+PShape[] objs;
 // Keyframes
-KeyFrame[][] frames = new KeyFrame[100][0]; // 1D = Object, 2D = Keyframe/timeline
+KeyFrame[][] frames; // 1D = Object, 2D = Keyframe/timeline
 int animLength = 0;
 
-
-/* TODO
- *
- * Creative Feature
- * - looping (move init stuff to seperate function that can be called at end of draw() after anim finished?)
- * - speed scale / frame rate
- * - size scale with +/-
- */
+// CREATIVE FEATURE
+int sizeScale = 1;
+Boolean looping = false;
 
 // Init
 void setup()
 {
     size(1440, 810, P3D);
-    //size(640, 360, P3D);
     frameRate(60);
-
-    // Camera settings
-    perspective(radians(60), float(width) / float(height), 1, 1000);
 
     // Load animation from file
     anim = loadStrings("animation.txt");
+
+    init();
+}
+
+// CREATIVE FEATURE - separated out to support looping
+void init()
+{
+    objs = new PShape[100];
+    frames = new KeyFrame[100][0];
+
+    // Camera settings
+    perspective(radians(60), float(width) / float(height), 1, 1000 * sizeScale);
 
     // Process instructions
     for (String a : anim) {
@@ -57,6 +60,7 @@ void setup()
             println(i, frameCount, "Object does not exist");
 }
 
+
 // Draw each frame
 void draw()
 {
@@ -66,7 +70,7 @@ void draw()
 
     // Camera offset
     translate(width/2 - 7, height/2 + 100, -7);
-    scale(10);
+    scale(sizeScale);
 
     int i = 0;
     // Loop through objects
@@ -142,11 +146,32 @@ void draw()
         popMatrix();
         i++;
     }
-    
-    if(frameCount >= animLength) {
+
+    if (frameCount >= animLength) {
         for (i = 0; i < objs.length; i++)
             if (objs[i] != null)
                 println(i, frameCount, "Object does not exist");
-        exit();
+
+        // CREATIVE FEATURE - loop if looping enabled
+        if (looping) {
+            frameCount = 0;
+            init();
+        } else exit();
     }
+}
+
+// CREATIVE FEATURE - Watching for keypresses / user commands
+void keyPressed()
+{
+    // Size Scale
+    if (key == '+')
+        sizeScale++;
+    else if (key == '-' && sizeScale > 1)
+        sizeScale--;
+
+    // Looping
+    if (key == 'L')
+        looping = true;
+    else if (key == 'l')
+        looping = false;
 }

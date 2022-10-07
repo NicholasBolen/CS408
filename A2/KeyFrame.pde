@@ -6,7 +6,7 @@ class KeyFrame {
     PVector position;
     PVector rotation;
     PVector scale;
-    
+
     // Construct from input format
     KeyFrame(float[] t) {
         frame = int(t[0]);
@@ -14,7 +14,7 @@ class KeyFrame {
         rotation = new PVector(t[4], t[5], t[6]);
         scale = new PVector(t[7], t[8], t[9]);
     }
-    
+
     // Copy constructor
     KeyFrame(KeyFrame k) {
         this.frame = k.frame;
@@ -22,16 +22,16 @@ class KeyFrame {
         this.rotation = k.rotation.copy();
         this.scale = k.scale.copy();
     }
-    
-    // Get value difference between two keyframes, 
+
+    // Get value difference between two keyframes,
     KeyFrame sub(KeyFrame k) {
         KeyFrame n = new KeyFrame(this);
-        
+
         n.frame = this.frame - k.frame;
         n.position.sub(k.position);
         n.rotation.sub(k.rotation);
         n.scale.sub(k.scale);
-        
+
         return n;
     }
 }
