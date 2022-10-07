@@ -9,11 +9,23 @@ PShape[] objs = new PShape[100];
 // Keyframes
 KeyFrame[][] frames = new KeyFrame[100][0]; // 1D = Object, 2D = Keyframe/timeline
 
+
+
+/* TODO
+ * print current object info
+ * bug with multiple objects
+ * 
+ * Creative Feature
+ * - looping (move init stuff to seperate function that can be called at end of draw() after anim finished?)
+ * - speed scale / frame rate
+ * - size scale with +/-
+ */
+
 // Init
 void setup()
 {
-    //size(1440, 810);
-    size(640, 360, P3D);
+    size(1440, 810, P3D);
+    //size(640, 360, P3D);
     frameRate(30);
 
     // Camera settings
@@ -49,7 +61,8 @@ void draw()
 
     // Camera offset
     translate(width/2 - 7, height/2 + 100, -7);
-
+    scale(10);
+    
     int i = 0;
     // Loop through objects
     for (KeyFrame[] k : frames) {
@@ -76,6 +89,8 @@ void draw()
             // position = diff * ratio + start_pos
             diff.position.mult(ratio);
             diff.position.add(k[0].position);
+            // Invert y (to match openGL axis)
+            diff.position.y *= -1;
             
             // Rotation
             diff.rotation.mult(ratio);
@@ -114,6 +129,7 @@ void draw()
             println("ERROR : Undefined object ID referenced, #", i);
             exit();
         }
+        
         popMatrix();
         i++;
     }
