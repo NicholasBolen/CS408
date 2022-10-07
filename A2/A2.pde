@@ -14,7 +14,7 @@ KeyFrame[][] frames = new KeyFrame[100][0]; // 1D = Object, 2D = Keyframe/timeli
 /* TODO
  * print current object info
  * bug with multiple objects
- * 
+ *
  * Creative Feature
  * - looping (move init stuff to seperate function that can be called at end of draw() after anim finished?)
  * - speed scale / frame rate
@@ -62,7 +62,7 @@ void draw()
     // Camera offset
     translate(width/2 - 7, height/2 + 100, -7);
     scale(10);
-    
+
     int i = 0;
     // Loop through objects
     for (KeyFrame[] k : frames) {
@@ -84,30 +84,30 @@ void draw()
             int progress = frameCount - k[0].frame;
             int total = diff.frame;
             float ratio = float(progress) / float(total);
-            
+
             // Linear Interpolation
             // position = diff * ratio + start_pos
             diff.position.mult(ratio);
             diff.position.add(k[0].position);
             // Invert y (to match openGL axis)
             diff.position.y *= -1;
-            
+
             // Rotation
             diff.rotation.mult(ratio);
             diff.rotation.add(k[0].rotation);
-            
+
             // Scale
             diff.scale.mult(ratio);
             diff.scale.add(k[0].scale);
-            
+
             // Remove old frame
-            if (k[1].frame <= frameCount + 1) {
+            if (k[1].frame <= frameCount + 1)
                 frames[i] = (KeyFrame[])subset(k, 1);
-            }
         }
         // No animation left for this object
         else {
             popMatrix();
+            i++;
             continue;
         }
 
@@ -123,13 +123,13 @@ void draw()
         scale(diff.scale.x, diff.scale.y, diff.scale.z);
 
         // Draw object
-        if(objs[i] != null)
+        if (objs[i] != null)
             shape(objs[i]);
         else {
             println("ERROR : Undefined object ID referenced, #", i);
             exit();
         }
-        
+
         popMatrix();
         i++;
     }
