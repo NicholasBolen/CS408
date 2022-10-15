@@ -7,6 +7,9 @@ You may be able to run the project through the included EXE file, however if the
 I have also included EXE files for linux and Windows machines, however I cannot ensure these will work without issue on everybody's system. As well, you will need to have installed Java Runtime Environment 17 as it was too large to upload to GitHub, if you attempt to run the application and it fails it will redirect you to the download page.
 I would recommend downloading and running through the Processing editor, however you may attempt this approach.
 
+The animation file should be named "animation.txt", and should be in the same folder as A2.pde. Any objects name in the animation.txt file will be imported by the name given, so please ensure that the file names match properly.
+I have included a sample animation and 2 custom models.
+
 ## IF WINDOW IS TOO LARGE FOR USER'S RESOLUTION ::
 
 Window size can be adjusted in the `A2.pde` file, simply change the `size(x, y, P3D)` function on line 20 (when opened in processing editor) to fit your needs.
