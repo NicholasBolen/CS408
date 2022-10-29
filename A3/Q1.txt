@@ -1,0 +1,5 @@
+01  for t = 0, 1, ..., T                        // for all times
+
+03      while t  >  na -> time
+
+05      u = (t + glutGet(GLUT_ELAPSED_TIME) - pa -> time) / (na -> time - pa -> time)
