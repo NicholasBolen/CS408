@@ -12,7 +12,8 @@
  */
 
 PVector[] control = new PVector[0];
-int scale = 20, offset = 200;
+int scale = 20, offset = 200, segments = 200;
+float i2 = 3;
 
 // Init
 void setup()
@@ -31,14 +32,14 @@ void setup()
     control = (PVector[])append(control, new PVector(41.5, 21.5, 0.0));
 
     size(1440, 810, P3D);
-    frameRate(60);
+    frameRate(30);
 }
 
 // Create new particle and call update function on each frame
 void draw()
 {
     // White background
-    background(255);
+    background(123);
 
     // Control points
     noStroke();
@@ -47,20 +48,12 @@ void draw()
         ellipse(x.x*scale + offset, x.y*scale + offset, 10, 10);
     }
 
-    /*
-    // Blue line
-    stroke(0, 0, 255);
-    for (int i = 0; i < control.length - 1; i++) {
-        line(control[i].x*scale + offset, control[i].y*scale + offset, control[i+1].x*scale + offset, control[i+1].y*scale + offset);
-    }
-    */
-
     // Blue curve
     noStroke();
     fill(0, 0, 255);
     for (int i = 3; i < control.length; i++) {
         // Calculate Cubic B-Spline segment
-        for (float u = 0; u <= 1; u += 0.001) {
+        for (float u = 0; u <= 1; u += 1.0 / segments) {
             // Calculate segment point
             PVector point = PVector.mult(control[i - 3], pow((1 - u), 3) / 6);
             point.add(PVector.mult(control[i - 2], (3*pow(u, 3) - 6*pow(u, 2) + 4) / 6));
@@ -71,8 +64,20 @@ void draw()
             ellipse(point.x*scale + offset, point.y*scale + offset, 2, 2);
         }
     }
-}
 
-void ucb(int i, float u)
-{
+    // Yellow sphere
+    fill(255, 255, 0);
+    float u = i2 % 1;
+    int i = floor(i2);
+    i2 += 1 / (5*30.0 / (11 - 3));
+    if (frameCount >= 150) {
+        i2 = 3;
+        frameCount = 0;
+    }
+    // Draw sphere
+    PVector point = PVector.mult(control[i - 3], pow((1 - u), 3) / 6);
+    point.add(PVector.mult(control[i - 2], (3*pow(u, 3) - 6*pow(u, 2) + 4) / 6));
+    point.add(PVector.mult(control[i - 1], (-3*pow(u, 3) + 3*pow(u, 2) + 3*u + 1) / 6));
+    point.add(PVector.mult(control[i], pow(u, 3) / 6));
+    ellipse(point.x*scale + offset, point.y*scale + offset, 30, 30);
 }
