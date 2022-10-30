@@ -12,8 +12,8 @@
  */
 
 PVector[] control = new PVector[0];
-int scale = 20, offset = 200, segments = 200;
-float i2 = 3;
+int scale = 10, offset = width / 4 * 2, segments = 200;
+float index1 = 3, index2 = 3, index3 = 3;
 
 // Init
 void setup()
@@ -31,7 +31,7 @@ void setup()
     control = (PVector[])append(control, new PVector(41.2, 20.5, 0.0));
     control = (PVector[])append(control, new PVector(41.5, 21.5, 0.0));
 
-    size(1440, 810, P3D);
+    size(810, 810, P3D);
     frameRate(30);
 }
 
@@ -41,13 +41,13 @@ void draw()
     // White background
     background(123);
 
+    // === (a) Uniform Cubic B-Spline ===
     // Control points
     noStroke();
     fill(0);
     for (PVector x : control) {
-        ellipse(x.x*scale + offset, x.y*scale + offset, 10, 10);
+        ellipse(x.x*scale + offset*6, x.y*scale + offset, 10, 10);
     }
-
     // Blue curve
     noStroke();
     fill(0, 0, 255);
@@ -61,23 +61,102 @@ void draw()
             point.add(PVector.mult(control[i], pow(u, 3) / 6));
 
             // Draw
-            ellipse(point.x*scale + offset, point.y*scale + offset, 2, 2);
+            ellipse(point.x*scale + offset*6, point.y*scale + offset, 2, 2);
         }
     }
 
+    // === (b) Motion Control ===
     // Yellow sphere
     fill(255, 255, 0);
-    float u = i2 % 1;
-    int i = floor(i2);
-    i2 += 1 / (5*30.0 / (11 - 3));
+    float u = index1 % 1;
+    int i = floor(index1);
+    index1 += 1 / (5*30.0 / (11 - 3));
     if (frameCount >= 150) {
-        i2 = 3;
-        frameCount = 0;
+        index1 = 3;
     }
     // Draw sphere
     PVector point = PVector.mult(control[i - 3], pow((1 - u), 3) / 6);
     point.add(PVector.mult(control[i - 2], (3*pow(u, 3) - 6*pow(u, 2) + 4) / 6));
     point.add(PVector.mult(control[i - 1], (-3*pow(u, 3) + 3*pow(u, 2) + 3*u + 1) / 6));
     point.add(PVector.mult(control[i], pow(u, 3) / 6));
-    ellipse(point.x*scale + offset, point.y*scale + offset, 30, 30);
+    ellipse(point.x*scale + offset*6, point.y*scale + offset, 1.5*scale, 1.5*scale);
+    
+    
+    // === (c) Sinusoidal Ease-in / Ease-out ===
+    // Control points
+    noStroke();
+    fill(0);
+    for (PVector x : control) {
+        ellipse(x.x*scale + offset*4, x.y*scale + offset*6, 10, 10);
+    }
+    // Blue curve
+    noStroke();
+    fill(0, 0, 255);
+    for (i = 3; i < control.length; i++) {
+        // Calculate Cubic B-Spline segment
+        for (u = 0; u <= 1; u += 1.0 / segments) {
+            // Calculate segment point
+            point = PVector.mult(control[i - 3], pow((1 - u), 3) / 6);
+            point.add(PVector.mult(control[i - 2], (3*pow(u, 3) - 6*pow(u, 2) + 4) / 6));
+            point.add(PVector.mult(control[i - 1], (-3*pow(u, 3) + 3*pow(u, 2) + 3*u + 1) / 6));
+            point.add(PVector.mult(control[i], pow(u, 3) / 6));
+
+            // Draw
+            ellipse(point.x*scale + offset*4, point.y*scale + offset*6, 2, 2);
+        }
+    }
+    // Yellow sphere
+    fill(255, 255, 0);
+    u = index2 % 1;
+    i = floor(index2);
+    index2 += 1 / (5*30.0 / (11 - 3));
+    if (frameCount >= 150) {
+        index2 = 3;
+    }
+    // Draw sphere
+    point = PVector.mult(control[i - 3], pow((1 - u), 3) / 6);
+    point.add(PVector.mult(control[i - 2], (3*pow(u, 3) - 6*pow(u, 2) + 4) / 6));
+    point.add(PVector.mult(control[i - 1], (-3*pow(u, 3) + 3*pow(u, 2) + 3*u + 1) / 6));
+    point.add(PVector.mult(control[i], pow(u, 3) / 6));
+    ellipse(point.x*scale + offset*4, point.y*scale + offset*6, 1.5*scale, 1.5*scale);
+    
+    
+    // === (d) Parabolic Ease-in / Ease-out ===
+    // Control points
+    noStroke();
+    fill(0);
+    for (PVector x : control) {
+        ellipse(x.x*scale + offset*2, x.y*scale + offset*11, 10, 10);
+    }
+    // Blue curve
+    noStroke();
+    fill(0, 0, 255);
+    for (i = 3; i < control.length; i++) {
+        // Calculate Cubic B-Spline segment
+        for (u = 0; u <= 1; u += 1.0 / segments) {
+            // Calculate segment point
+            point = PVector.mult(control[i - 3], pow((1 - u), 3) / 6);
+            point.add(PVector.mult(control[i - 2], (3*pow(u, 3) - 6*pow(u, 2) + 4) / 6));
+            point.add(PVector.mult(control[i - 1], (-3*pow(u, 3) + 3*pow(u, 2) + 3*u + 1) / 6));
+            point.add(PVector.mult(control[i], pow(u, 3) / 6));
+
+            // Draw
+            ellipse(point.x*scale + offset*2, point.y*scale + offset*11, 2, 2);
+        }
+    }
+    // Yellow sphere
+    fill(255, 255, 0);
+    u = index3 % 1;
+    i = floor(index3);
+    index3 += 1 / (150.0 / 8);
+    if (frameCount >= 150) {
+        index3 = 3;
+        frameCount = 0;
+    }
+    // Draw sphere
+    point = PVector.mult(control[i - 3], pow((1 - u), 3) / 6);
+    point.add(PVector.mult(control[i - 2], (3*pow(u, 3) - 6*pow(u, 2) + 4) / 6));
+    point.add(PVector.mult(control[i - 1], (-3*pow(u, 3) + 3*pow(u, 2) + 3*u + 1) / 6));
+    point.add(PVector.mult(control[i], pow(u, 3) / 6));
+    ellipse(point.x*scale + offset*2, point.y*scale + offset*11, 1.5*scale, 1.5*scale);
 }
