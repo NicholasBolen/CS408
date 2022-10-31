@@ -9,4 +9,8 @@ I would recommend downloading and running through the Processing editor, however
 
 ## IF WINDOW IS TOO LARGE FOR USER'S RESOLUTION ::
 
-Window size can be adjusted in the `A3.pde` file, simply change the `size(x, y, P3D)` function on line 9999 (when opened in processing editor) to fit your needs.
+Window size can be adjusted in the `A3.pde` file, simply change the `size(x, y, P3D)` function on line 79 (when opened in processing editor) to fit your needs.
+
+## Understanding Output
+
+When you the program is run, there will be three curve present, relating to each of parts (a/b), (c), and (d) from top to bottom. That is, the top curve uses linear motion, the middle curve uses sinusoidal ease-in/out, and the bottom curve uses parabolic ease-in/out.
