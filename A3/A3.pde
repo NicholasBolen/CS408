@@ -89,6 +89,7 @@ void draw()
     for (PVector x : control) {
         ellipse(x.x*scale + offset*4, x.y*scale + offset*6, 10, 10);
     }
+
     // Blue curve
     noStroke();
     fill(0, 0, 255);
@@ -105,14 +106,14 @@ void draw()
             ellipse(point.x*scale + offset*4, point.y*scale + offset*6, 2, 2);
         }
     }
+    
     // Yellow sphere
     fill(255, 255, 0);
+    
+    index2 = (float)sinEase(frameCount, 3, 7.99999, 5 * 30);    // Apply sinusoidal easeIn/easeOut
     u = index2 % 1;
     i = floor(index2);
-    index2 += 1 / (5*30.0 / (11 - 3));
-    if (frameCount >= 150) {
-        index2 = 3;
-    }
+    
     // Draw sphere
     point = PVector.mult(control[i - 3], pow((1 - u), 3) / 6);
     point.add(PVector.mult(control[i - 2], (3*pow(u, 3) - 6*pow(u, 2) + 4) / 6));
@@ -159,4 +160,14 @@ void draw()
     point.add(PVector.mult(control[i - 1], (-3*pow(u, 3) + 3*pow(u, 2) + 3*u + 1) / 6));
     point.add(PVector.mult(control[i], pow(u, 3) / 6));
     ellipse(point.x*scale + offset*2, point.y*scale + offset*11, 1.5*scale, 1.5*scale);
+}
+
+/*
+t = time (progress through the animation, 0 = start, d = end)
+start = value when t = 0)
+end = value when t = 1
+maxT = max time
+*/
+double sinEase(int t, int start, float end, int maxT) {
+    return -end / 2 * (Math.cos(Math.PI * t / maxT) - 1) + start;
 }
