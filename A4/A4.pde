@@ -2,35 +2,24 @@
 // Nicholas Bolen
 // #200455709
 
-float angle = 0;
-// Body (neck) -> head (nose, ears)
-//     \-> upper arm -> lower arm
-//     \-> upper leg -> lower leg -> foot
-// Body | head | upper arm | lower arm | upper leg | lower leg | foot
-//float minZ[] = {PI/4};
-
-//              head arm1 arm2 leg1 leg2
-
-
-//        y
-//        |
-//     x--z
+// used for spin
+float angle = 0, speed = 0;
 
 PVector[] min = {
     new PVector(-PI/6, -PI/3, 0), // head
     new PVector(-PI/4, -PI/2, 0), // upper arm
     new PVector(0, 0, 0), // lower arm
-    new PVector(0, 0, 0), // upper leg
-    new PVector(0, 0, 0), // lower leg
-    new PVector(0, 0, 0), // foot
+    new PVector(-PI/6, -PI/2, 0), // upper leg
+    new PVector(-5*PI/6, 0, 0), // lower leg
+    new PVector(-PI/3, 0, 0), // foot
 };
 PVector[] max = {
     new PVector(PI/4, PI/3, 0), // head
     new PVector(PI, PI/2, PI), // upper arm
     new PVector(5*PI/6, 0, 0), // lower arm
-    new PVector(0, 0, 0), // upper leg
-    new PVector(5*PI/6, 0, 0), // lower leg
-    new PVector(PI/3, 0, 0), // foot
+    new PVector(PI/2, 0, PI/3), // upper leg
+    new PVector(0, 0, 0), // lower leg
+    new PVector(0, 0, 0), // foot
 };
 
 // Init
@@ -43,16 +32,17 @@ void setup()
 // Draw on each frame
 void draw()
 {
-    // frame setup    
+    // frame setup
     lights();
     translate(width/2, height/2);
     noStroke();
-    
+    sphereDetail(25);
+
     // spin
-    //angle += 0.02;
-    //rotateX(angle/2);
-    //rotateY(angle);
-    //rotateZ(angle*1.5);
+    angle += speed;
+    rotateX(angle/2);
+    rotateY(angle);
+    rotateZ(angle*1.5);
     pushMatrix();
 
     // Grey background
@@ -69,8 +59,8 @@ void draw()
     // neck
     pushMatrix();
     rotateY(interpolate(max[0].y, min[0].y)); // left/right
-    translate(0, -115);
-    cylinder(10, 40, 25);
+    translate(0, -95);
+    cylinder(10, 20, 25);
     // head
     rotateX(interpolate(max[0].x, min[0].x)); // up/down
     translate(0, -50);
@@ -127,30 +117,36 @@ void draw()
     // left-u
     pushMatrix();
     translate(-25, 75);
+    rotateX(interpolate(max[3].x, min[3].x)); // front/back
+    rotateZ(interpolate(max[3].z, min[3].z)); // left/right
+    rotateY(interpolate(max[3].y, min[3].y)); // foot
     cylinder(12, 75, 25);
     // left-l
     translate(0, 75);
     sphere(12); // knee
-    rotateX(-interpolate(max[4].x, min[4].x)); // knee bend
+    rotateX(interpolate(max[4].x, min[4].x)); // knee bend
     cylinder(12, 75, 25);
     // left-foot
     translate(0, 75, 0);
-    rotateX(-interpolate(max[5].x, min[5].x)); // foot bend
+    rotateX(interpolate(max[5].x, min[5].x)); // foot bend
     translate(0, 6, 13);
     box(25, 12, 50);
     popMatrix();
     // right-u
     pushMatrix();
     translate(25, 75);
+    rotateX(interpolate(max[3].x, min[3].x)); // front/back
+    rotateZ(-interpolate(max[3].z, min[3].z)); // out/up
+    rotateY(-interpolate(max[3].y, min[3].y)); // foot
     cylinder(12, 75, 25);
     // right-l
     translate(0, 75);
     sphere(12); // knee
-    rotateX(-interpolate(max[4].x, min[4].x)); // knee bend
+    rotateX(interpolate(max[4].x, min[4].x)); // knee bend
     cylinder(12, 75, 25);
     // right-foot
     translate(0, 75, 0);
-    rotateX(-interpolate(max[5].x, min[5].x)); // foot bend
+    rotateX(interpolate(max[5].x, min[5].x)); // foot bend
     translate(0, 6, 13);
     box(25, 12, 50);
     popMatrix();
@@ -159,8 +155,22 @@ void draw()
     popMatrix();
 }
 
+// Watching for keypresses / user commands
+void keyPressed()
+{
+    // Colour components
+    if (key == '+')
+        speed += 0.005;
+    else if (key == '-')
+        speed -= 0.005;
+}
+
+// Create a cylinder (radius, height, lod)
 void cylinder(int r, int h, int vertices) {
     pushMatrix();
+    rotateX(PI/2);
+    circle(0, 0, 2*r);
+    rotateX(-PI/2);
     translate(0, h/2);
     beginShape(TRIANGLE_STRIP);
 
@@ -173,9 +183,16 @@ void cylinder(int r, int h, int vertices) {
         vertex(x * r, +h/2, z * r);
     }
     endShape(CLOSE);
+    translate(0, h/2);
+    rotateX(PI/2);
+    circle(0, 0, 2*r);
+    rotateX(-PI/2);
     popMatrix();
 }
 
+// Interpolate between max and min, then back to max. 120 frames/full loop
 float interpolate(float max, float min) {
-    return ((frameCount % 60 + 1)/60.0) * (max - min) + min;
+    if(frameCount % 120 + 1 <= 60)
+        return ((frameCount % 60 + 1)/60.0) * (max - min) + min;
+    return (1 - (frameCount % 60 + 1)/60.0) * (max - min) + min;
 }
