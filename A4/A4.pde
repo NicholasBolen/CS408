@@ -3,41 +3,77 @@
 // #200455709
 
 float angle = 0;
+// Body (neck) -> head (nose, ears)
+//     \-> upper arm -> lower arm
+//     \-> upper leg -> lower leg -> foot
+// Body | head | upper arm | lower arm | upper leg | lower leg | foot
+//float minZ[] = {PI/4};
+
+//              head arm1 arm2 leg1 leg2
+
+
+//        y
+//        |
+//     x--z
+
+PVector[] min = {
+    new PVector(-PI/6, -PI/3, 0), // head
+    new PVector(-PI/4, -PI/2, 0), // upper arm
+    new PVector(0, 0, 0), // lower arm
+    new PVector(0, 0, 0), // upper leg
+    new PVector(0, 0, 0), // lower leg
+    new PVector(0, 0, 0), // foot
+};
+PVector[] max = {
+    new PVector(PI/4, PI/3, 0), // head
+    new PVector(PI, PI/2, PI), // upper arm
+    new PVector(5*PI/6, 0, 0), // lower arm
+    new PVector(0, 0, 0), // upper leg
+    new PVector(5*PI/6, 0, 0), // lower leg
+    new PVector(PI/3, 0, 0), // foot
+};
 
 // Init
 void setup()
 {
     size(810, 810, P3D);
     frameRate(30);
-    lights();
 }
 
 // Draw on each frame
 void draw()
 {
-    angle += 0.02;
+    // frame setup    
+    lights();
     translate(width/2, height/2);
-    rotateX(angle/2);
-    rotateY(angle);
-    rotateZ(angle*1.5);
-    pushMatrix();
+    noStroke();
     
-    // Black background
+    // spin
+    //angle += 0.02;
+    //rotateX(angle/2);
+    //rotateY(angle);
+    //rotateZ(angle*1.5);
+    pushMatrix();
+
+    // Grey background
     background(123);
+    // Yellow character
     fill(255, 255, 0);
-    //noFill();
 
     // Character
     // body
-    cylinder(50, 200, 25);
+    pushMatrix();
+    translate(0, -75);
+    cylinder(50, 150, 25);
+    popMatrix();
     // neck
     pushMatrix();
-    translate(0, -110);
-    cylinder(10, 20, 25);
-    popMatrix();
+    rotateY(interpolate(max[0].y, min[0].y)); // left/right
+    translate(0, -115);
+    cylinder(10, 40, 25);
     // head
-    pushMatrix();
-    translate(0, -170);
+    rotateX(interpolate(max[0].x, min[0].x)); // up/down
+    translate(0, -50);
     sphere(50);
     // nose
     pushMatrix();
@@ -56,55 +92,76 @@ void draw()
     popMatrix();
     popMatrix();
 
-    
+
     // arms
     // left-u
     pushMatrix();
     translate(-62, -70);
-    cylinder(12, 50, 25);
+    sphere(12); // shoulder
+    rotateX(interpolate(max[1].x, min[1].x)); // forwards/back
+    rotateZ(interpolate(max[1].z, min[1].z)); // out/up
+    rotateY(interpolate(max[1].y, min[1].y)); // palm
+    cylinder(12, 75, 25);
     // left-l
-    translate(0, 50);
-    cylinder(12, 50, 25);
+    translate(0, 75);
+    sphere(12); // elbow
+    rotateX(interpolate(max[2].x, min[2].x)); // elbow bend
+    cylinder(12, 75, 25);
     popMatrix();
     // right-u
     pushMatrix();
     translate(62, -70);
-    //rotateZ(-PI/3);
-    cylinder(12, 50, 25);
+    sphere(12); // shoulder
+    rotateX(interpolate(max[1].x, min[1].x)); // forwards/back
+    rotateZ(-interpolate(max[1].z, min[1].z)); // out/up
+    rotateY(-interpolate(max[1].y, min[1].y)); // palm
+    cylinder(12, 75, 25);
     // left-l
-    translate(0, 50);
-    cylinder(12, 50, 25);
+    translate(0, 75);
+    sphere(12); // elbow
+    rotateX(interpolate(max[2].x, min[2].x)); // elbow bend
+    cylinder(12, 75, 25);
     popMatrix();
-    
+
     // legs
     // left-u
     pushMatrix();
-    translate(-25, 125);
-    cylinder(12, 50, 25);
+    translate(-25, 75);
+    cylinder(12, 75, 25);
     // left-l
-    translate(0, 50);
-    cylinder(12, 50, 25);
+    translate(0, 75);
+    sphere(12); // knee
+    rotateX(-interpolate(max[4].x, min[4].x)); // knee bend
+    cylinder(12, 75, 25);
     // left-foot
-    translate(0, 31, 13);
+    translate(0, 75, 0);
+    rotateX(-interpolate(max[5].x, min[5].x)); // foot bend
+    translate(0, 6, 13);
     box(25, 12, 50);
     popMatrix();
     // right-u
     pushMatrix();
-    translate(25, 125);
-    cylinder(12, 50, 25);
+    translate(25, 75);
+    cylinder(12, 75, 25);
     // right-l
-    translate(0, 50);
-    cylinder(12, 50, 25);
+    translate(0, 75);
+    sphere(12); // knee
+    rotateX(-interpolate(max[4].x, min[4].x)); // knee bend
+    cylinder(12, 75, 25);
     // right-foot
-    translate(0, 31, 13);
+    translate(0, 75, 0);
+    rotateX(-interpolate(max[5].x, min[5].x)); // foot bend
+    translate(0, 6, 13);
     box(25, 12, 50);
     popMatrix();
-    
+
     //box(160, 50, 100);
     popMatrix();
 }
 
 void cylinder(int r, int h, int vertices) {
+    pushMatrix();
+    translate(0, h/2);
     beginShape(TRIANGLE_STRIP);
 
     for (int i = 0; i <= vertices; i++) {
@@ -116,4 +173,9 @@ void cylinder(int r, int h, int vertices) {
         vertex(x * r, +h/2, z * r);
     }
     endShape(CLOSE);
+    popMatrix();
+}
+
+float interpolate(float max, float min) {
+    return ((frameCount % 60 + 1)/60.0) * (max - min) + min;
 }
