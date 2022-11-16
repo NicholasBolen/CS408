@@ -3,7 +3,7 @@
 // #200455709
 
 // used for spin
-float angle = 0, speed = 0;
+PVector angle = new PVector(), speed = new PVector();
 
 PVector[] min = {
     new PVector(-PI/6, -PI/3, 0), // head
@@ -49,10 +49,12 @@ void draw()
     sphereDetail(25);
 
     // spin
-    angle += speed;
-    rotateX(angle/2);
-    rotateY(angle);
-    rotateZ(angle*1.5);
+    angle.x += speed.x;
+    angle.y += speed.y;
+    angle.z += speed.z;
+    rotateX(angle.x);
+    rotateY(angle.y);
+    rotateZ(angle.z);
     pushMatrix();
 
     // Grey background
@@ -169,10 +171,18 @@ void draw()
 void keyPressed()
 {
     // Spin speed
-    if (key == '+')
-        speed += 0.005;
-    else if (key == '-')
-        speed -= 0.005;
+    if (key == 'X')
+        speed.x += 0.005;
+    else if (key == 'x')
+        speed.x -= 0.005;
+    if (key == 'Y')
+        speed.y += 0.005;
+    else if (key == 'y')
+        speed.y -= 0.005;
+    if (key == 'Z')
+        speed.z += 0.005;
+    else if (key == 'z')
+        speed.z -= 0.005;
 
     // default pose
     if (key == '0') {
