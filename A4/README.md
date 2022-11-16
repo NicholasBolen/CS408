@@ -92,6 +92,8 @@ R lower-leg = (-PI/2, 0, 0)
 
 ‘n’ - Interpolate between pose 3 and pose 4 (custom, cheering march?)
 
+‘0’ - Pose with all angles 0 (default pose) (not animated)
+
 ‘X/x’ - Increase/decrease X axis spin speed
 
 ‘Y/y’ - Increase/decrease Y axis spin speed
