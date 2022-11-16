@@ -29,6 +29,8 @@ Note: When some of these rotations are executed, they are negated (in places whe
 Tables in `A4.pdf`
 
 Here are the raw min & max vector arrays I used:
+
+```
 PVector[] min = {
     new PVector(-PI/6, -PI/3, 0), // head
     new PVector(-PI/4, -PI/2, 0), // left upper arm
@@ -55,6 +57,7 @@ PVector[] max = {
     new PVector(0, 0, 0), // right lower leg
     new PVector(0, 0, 0), // right foot
 };
+```
 
 # Q4
 
@@ -65,22 +68,34 @@ Active when the program is launched for the first time, and will continue loopin
 Tables in `A4.pdf`
 
 L upper-arm = (0, 0, PI/2)
+
 R upper-arm = (0, 0, PI/2)
+
 R upper-arm = (PI/2, 0, PI/2)
+
 R lower-arm = (PI/2, 0, 0)
+
 R upper-leg = (PI/3, 0, 0)
+
 L upper-arm=(PI/2, 0, PI/2)
+
 L lower-arm = (PI/2, 0, 0)
+
 R lower-leg = (-PI/2, 0, 0)
 
 
 # Q6
 
 ‘f’ - Interpolate between pose 0 and pose 1
+
 ‘b’ - Interpolate between pose 0 and pose 2
+
 ‘n’ - Interpolate between pose 3 and pose 4 (custom, cheering march?)
+
 ‘X/x’ - Increase/decrease X axis spin speed
+
 ‘Y/y’ - Increase/decrease Y axis spin speed
+
 ‘Z/z’ - Increase/decrease Z axis spin speed
 
 
