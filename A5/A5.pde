@@ -5,12 +5,13 @@
 Gas[][][] grid;
 Gas[][] cur, old;
 
-int gasP = 50, vScale = 100;
+// Creative Feature - controls for gas percent, velocity scale, and velocity max
+int gasP = 50, vScale = 100, vMax = 3;
 
 // Init
 void setup()
 {
-    frameCount = 0;
+    frameCount = 0;    // Creative Feature - reset frameCount when restarting simulation
     size(810, 810);
     frameRate(30);
 
@@ -18,7 +19,7 @@ void setup()
     grid = new Gas[2][height][width];
     for (int i = 0; i < height; i++)
         for (int j = 0; j < width; j++)
-            grid[0][i][j] = new Gas(3, gasP/1000.0);
+            grid[0][i][j] = new Gas(vMax, gasP/1000.0);    // Creative Feature - pass set gas percentage & velocity max to gas generation
 }
 
 // Draw on each frame
@@ -57,8 +58,8 @@ void displayGrid() {
 // Find cells to be updated and call update
 void updateCell(int x, int y) {
     // Find newx and newy
-    float newx = x + old[y][x].velocity.x * (vScale/100.0);
-    float newy = y + old[y][x].velocity.y * (vScale/100.0);
+    float newx = x + old[y][x].velocity.x * (vScale/100.0);    // Creative Feature - apply velocity scale when finding position
+    float newy = y + old[y][x].velocity.y * (vScale/100.0);    // Creative Feature - apply velocity scale when finding position
     while (newy >= height) newy -= height;
     while (newy < 0.0) newy += height;
     while (newx >= width) newx -= width;
@@ -115,13 +116,13 @@ void updateFromInflow(int x, int y, float m2, PVector v2) {
     }
 }
 
-// CREATIVE FEATURE
+// Creative Feature - detect keypresses for controls
 void keyPressed() {
-    // Reset
+    // Creative Feature - Reset
     if (key == '0')
         setup();
 
-    // Gas percent scale
+    // Creative Feature - Gas percent scale
     if (key == 'r' && gasP > 0) {
         gasP -= 5;
         println("Gas percent:", gasP/1000.0);
@@ -130,12 +131,21 @@ void keyPressed() {
         println("Gas percent:", gasP/1000.0);
     }
 
-    // Velocity scale
+    // Creative Feature - Velocity scale
     if (key == 'v') {
         vScale -= 5;
         println("Velocity scale:", vScale/100.0);
     } else if (key == 'V') {
         vScale += 5;
         println("Velocity scale:", vScale/100.0);
+    }
+    
+    // Creative Feature - Velocity max
+    if (key == '-' && vMax > 0) {
+        vMax--;
+        println("Velocity Max:", vMax);
+    } else if (key == '+') {
+        vMax++;
+        println("Velocity Max:", vMax);
     }
 }
