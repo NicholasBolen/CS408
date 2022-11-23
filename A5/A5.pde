@@ -2,19 +2,20 @@
 // Nicholas Bolen
 // #200455709
 
-Gas[][] a;
+Gas[][][] grid;
+Gas[][] cur, old;
 
 // Init
 void setup()
 {
     size(810, 810);
     frameRate(30);
-    
-    // Initialize gas
-    a = new Gas[height][width];
+
+    // Initialize gas with values
+    grid = new Gas[2][height][width];
     for (int i = 0; i < height; i++)
         for (int j = 0; j < width; j++)
-            a[i][j] = new Gas(j, i);
+            grid[0][i][j] = new Gas(3);
 }
 
 // Draw on each frame
@@ -22,27 +23,90 @@ void draw()
 {
     // Black background
     background(0);
+    // Determine old/new grids
+    old = grid[(frameCount + 1) % 2];
+    cur = grid[frameCount % 2];
 
-    // Display gas
-    loadPixels();
+    displayGrid();
+
+    // Initialize new grid to 0
     for (int i = 0; i < height; i++)
-        for (int j = 0; j < width; j++) {
-            Gas cur = a[i][j];
-            //println(cur.position.x, cur.position.y);
-            pixels[int(cur.position.y)*height + int(cur.position.x)] = color(cur.density, pow(cur.density, 2) * 0.05, pow(cur.density, 3) * 0.0001);
-        }
-    updatePixels();
-
+        for (int j = 0; j < width; j++)
+            cur[i][j] = new Gas(0);
 
     // Update position
     for (int i = 0; i < height; i++)
+        for (int j = 0; j < width; j++)
+            updateCell(j, i);
+}
+
+// Display gas
+void displayGrid() {
+    loadPixels();
+    for (int i = 0; i < height; i++)
         for (int j = 0; j < width; j++) {
-            Gas cur = a[i][j];
-            cur.position.x = (cur.position.x + cur.velocity.x) % width;
-            if (cur.position.x < 0)
-                cur.position.x += width;
-            cur.position.y = (cur.position.y + cur.velocity.y) % height;
-            if (cur.position.y < 0)
-                cur.position.y += height;
+            pixels[i*width + j] = color(old[i][j].density, pow(old[i][j].density, 2) * 0.05, pow(old[i][j].density, 3) * 0.0001);
         }
+    updatePixels();
+}
+
+// Find cells to be updated, and call update
+void updateCell(int x, int y) {
+    // Find newx and newy
+    float newx = x + old[y][x].velocity.x;
+    float newy = y + old[y][x].velocity.y;
+    while (newy >= height) newy -= height;
+    while (newy < 0.0) newy += height;
+    while (newx >= width) newx -= width;
+    while (newx < 0.0) newx += width;
+
+    // Locate all destination cells
+    int intx = (int) newx;
+    int inty = (int) newy;
+    float fractionx = newx - intx;
+    float fractiony = newy - inty;
+
+    // Update from inflow
+    updateFromInflow(
+        intx,
+        inty,
+        (1.0 - fractionx) * (1.0 - fractiony) * old[y][x].density,
+        old[y][x].velocity);
+    updateFromInflow(
+        intx,
+        inty + 1,
+        (1.0 - fractionx) * fractiony          * old[y][x].density,
+        old[y][x].velocity);
+    updateFromInflow(
+        intx + 1,
+        inty,
+        fractionx          * (1.0 - fractiony) * old[y][x].density,
+        old[y][x].velocity);
+    updateFromInflow(
+        intx + 1,
+        inty + 1,
+        fractionx          * fractiony           * old[y][x].density,
+        old[y][x].velocity);
+}
+
+// Update cells velocity & density
+void updateFromInflow(int x, int y, float m2, PVector v2) {
+    // Wrap-around
+    while (y >= height) y -= height;
+    while (y < 0.0) y += height;
+    while (x >= width) x -= width;
+    while (x < 0.0) x += width;
+
+    // Save current cell conditions
+    float m1 = cur[y][x].density;
+    PVector v1 = cur[y][x].velocity;
+
+    // Avoid dividing by 0
+    if (m1 + m2 == 0) {
+        cur[y][x].density = 0;
+        cur[y][x].velocity = new PVector(0, 0);
+    } else {
+        cur[y][x].density = m1 + m2;
+        cur[y][x].velocity = new PVector((m1 * v1.x + m2*v2.x) / (m1 + m2), (m1 * v1.y + m2*v2.y) / (m1 + m2));
+    }
 }
