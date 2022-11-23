@@ -22,12 +22,13 @@ public class A5 extends PApplet {
 Gas[][][] grid;
 Gas[][] cur, old;
 
-int gasP = 50, vScale = 100;
+// Creative Feature - controls for gas percent, velocity scale, and velocity max
+int gasP = 50, vScale = 100, vMax = 3;
 
 // Init
  public void setup()
 {
-    frameCount = 0;
+    frameCount = 0;    // Creative Feature - reset frameCount when restarting simulation
     /* size commented out by preprocessor */;
     frameRate(30);
 
@@ -35,7 +36,7 @@ int gasP = 50, vScale = 100;
     grid = new Gas[2][height][width];
     for (int i = 0; i < height; i++)
         for (int j = 0; j < width; j++)
-            grid[0][i][j] = new Gas(3, gasP/1000.0f);
+            grid[0][i][j] = new Gas(vMax, gasP/1000.0f);    // Creative Feature - pass set gas percentage & velocity max to gas generation
 }
 
 // Draw on each frame
@@ -74,8 +75,8 @@ int gasP = 50, vScale = 100;
 // Find cells to be updated and call update
  public void updateCell(int x, int y) {
     // Find newx and newy
-    float newx = x + old[y][x].velocity.x * (vScale/100.0f);
-    float newy = y + old[y][x].velocity.y * (vScale/100.0f);
+    float newx = x + old[y][x].velocity.x * (vScale/100.0f);    // Creative Feature - apply velocity scale when finding position
+    float newy = y + old[y][x].velocity.y * (vScale/100.0f);    // Creative Feature - apply velocity scale when finding position
     while (newy >= height) newy -= height;
     while (newy < 0.0f) newy += height;
     while (newx >= width) newx -= width;
@@ -132,13 +133,13 @@ int gasP = 50, vScale = 100;
     }
 }
 
-// CREATIVE FEATURE
+// Creative Feature - detect keypresses for controls
  public void keyPressed() {
-    // Reset
+    // Creative Feature - Reset
     if (key == '0')
         setup();
 
-    // Gas percent scale
+    // Creative Feature - Gas percent scale
     if (key == 'r' && gasP > 0) {
         gasP -= 5;
         println("Gas percent:", gasP/1000.0f);
@@ -147,13 +148,22 @@ int gasP = 50, vScale = 100;
         println("Gas percent:", gasP/1000.0f);
     }
 
-    // Velocity scale
+    // Creative Feature - Velocity scale
     if (key == 'v') {
         vScale -= 5;
         println("Velocity scale:", vScale/100.0f);
     } else if (key == 'V') {
         vScale += 5;
         println("Velocity scale:", vScale/100.0f);
+    }
+    
+    // Creative Feature - Velocity max
+    if (key == '-' && vMax > 0) {
+        vMax--;
+        println("Velocity Max:", vMax);
+    } else if (key == '+') {
+        vMax++;
+        println("Velocity Max:", vMax);
     }
 }
 // The Gas class
@@ -169,14 +179,14 @@ class Gas {
         float f = 1;
 
         if (a != 0) {
-            x = random(-1*a, a);
-            y = random(-1*a, a);
+            x = random(-1*a, a);    // Creative Feature - use gas max
+            y = random(-1*a, a);    // Creative Feature - use gas max
             f = random(1);
         }
 
         velocity = new PVector(x, y);
         density = 0;
-        if (f <= gasP)
+        if (f <= gasP)    // Creative Feature - gas threshold set by gasP
             density = random(1) * 100;
     }
 };
