@@ -5,9 +5,12 @@
 Gas[][][] grid;
 Gas[][] cur, old;
 
+int gasP = 50, vScale = 100;
+
 // Init
 void setup()
 {
+    frameCount = 0;
     size(810, 810);
     frameRate(30);
 
@@ -15,7 +18,7 @@ void setup()
     grid = new Gas[2][height][width];
     for (int i = 0; i < height; i++)
         for (int j = 0; j < width; j++)
-            grid[0][i][j] = new Gas(3);
+            grid[0][i][j] = new Gas(3, gasP/1000.0);
 }
 
 // Draw on each frame
@@ -32,7 +35,7 @@ void draw()
     // Initialize new grid to 0
     for (int i = 0; i < height; i++)
         for (int j = 0; j < width; j++)
-            cur[i][j] = new Gas(0);
+            cur[i][j] = new Gas(0, 0);
 
     // Update position
     for (int i = 0; i < height; i++)
@@ -42,6 +45,7 @@ void draw()
 
 // Display gas
 void displayGrid() {
+    // Display gas
     loadPixels();
     for (int i = 0; i < height; i++)
         for (int j = 0; j < width; j++) {
@@ -50,11 +54,11 @@ void displayGrid() {
     updatePixels();
 }
 
-// Find cells to be updated, and call update
+// Find cells to be updated and call update
 void updateCell(int x, int y) {
     // Find newx and newy
-    float newx = x + old[y][x].velocity.x;
-    float newy = y + old[y][x].velocity.y;
+    float newx = x + old[y][x].velocity.x * (vScale/100.0);
+    float newy = y + old[y][x].velocity.y * (vScale/100.0);
     while (newy >= height) newy -= height;
     while (newy < 0.0) newy += height;
     while (newx >= width) newx -= width;
@@ -89,7 +93,7 @@ void updateCell(int x, int y) {
         old[y][x].velocity);
 }
 
-// Update cells velocity & density
+// Update cells (velocity & density)
 void updateFromInflow(int x, int y, float m2, PVector v2) {
     // Wrap-around
     while (y >= height) y -= height;
@@ -108,5 +112,30 @@ void updateFromInflow(int x, int y, float m2, PVector v2) {
     } else {
         cur[y][x].density = m1 + m2;
         cur[y][x].velocity = new PVector((m1 * v1.x + m2*v2.x) / (m1 + m2), (m1 * v1.y + m2*v2.y) / (m1 + m2));
+    }
+}
+
+// CREATIVE FEATURE
+void keyPressed() {
+    // Reset
+    if (key == '0')
+        setup();
+
+    // Gas percent scale
+    if (key == 'r' && gasP > 0) {
+        gasP -= 5;
+        println("Gas percent:", gasP/1000.0);
+    } else if (key == 'R' && gasP < 1000) {
+        gasP += 5;
+        println("Gas percent:", gasP/1000.0);
+    }
+
+    // Velocity scale
+    if (key == 'v') {
+        vScale -= 5;
+        println("Velocity scale:", vScale/100.0);
+    } else if (key == 'V') {
+        vScale += 5;
+        println("Velocity scale:", vScale/100.0);
     }
 }

@@ -6,7 +6,7 @@ class Gas {
     PVector velocity;
 
     // Default constructor
-    Gas(int a) {
+    Gas(int a, float gasP) {
         float x = 0, y = 0;
         float f = 1;
 
@@ -18,7 +18,7 @@ class Gas {
 
         velocity = new PVector(x, y);
         density = 0;
-        if (f <= 0.05)
+        if (f <= gasP)
             density = random(1) * 100;
     }
 };
