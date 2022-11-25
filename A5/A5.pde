@@ -5,8 +5,8 @@
 Gas[][][] grid;
 Gas[][] cur, old;
 
-// Creative Feature - controls for gas percent, velocity scale, and velocity max
-int gasP = 50, vScale = 100, vMax = 3;
+// Creative Feature - controls for gas percent, velocity scale, velocity max, colourMode
+int gasP = 50, vScale = 100, vMax = 3, colourMode = 0;
 
 // Init
 void setup()
@@ -50,9 +50,61 @@ void displayGrid() {
     loadPixels();
     for (int i = 0; i < height; i++)
         for (int j = 0; j < width; j++) {
-            pixels[i*width + j] = color(old[i][j].density, pow(old[i][j].density, 2) * 0.05, pow(old[i][j].density, 3) * 0.0001);
+            float density = old[i][j].density;
+            pixels[i*width + j] = colorFunc(density, j, i);
         }
     updatePixels();
+}
+
+// Creative Feature - return colour based on current state & colourMode
+color colorFunc(float density, int x, int y) {
+
+    // rgb controls
+    float r = 0;
+    float g = 0;
+    float b = 0;
+
+    // Default
+    if (colourMode == 0)
+        return color(density, pow(density, 2) * 0.05, pow(density, 3) * 0.0001);
+
+    //  Heat map
+    if (colourMode == 1) {
+        int max = 75;
+        // 0  -  25 = black to red
+        if (density / max < 0.25)
+            r = 255 * ((density / max) / 0.25);
+        // 25 -  50 = red to green
+        else if (density / max < 0.5) {
+            g = 255 * (((density / max) - 0.25) / 0.25);
+            r = 255 - g;
+        }
+        // 50 -  99 = green to blue
+        else if (density / max < 0.99) {
+            b = 255 * (((density / max) - 0.5) / 0.49);
+            g = 255 - b;
+        }
+        // 99 - 100 = blue to white
+        else {
+            b = 255;
+            g = (((density / max) - 0.99) / 0.01);
+            r = g;
+        }
+        return color(r, g, b);
+    }
+
+    // Aqua
+    if (colourMode == 2)
+        return color(0, 255 - density*100, 255 - density*100);
+
+    // Colour mapped by position
+    r = (x / float(width))*255;
+    g = 255 - ((x + y) / float(width + height))*255;
+    b = 255 - ((x + (height-y)) / float(width + height))*255;
+
+    if (colourMode == 3)
+        return color(r/density, g/density, b/density);
+    return color(255 - r/density, 255 - g/density, 255 - b/density);
 }
 
 // Find cells to be updated and call update
@@ -139,7 +191,7 @@ void keyPressed() {
         vScale += 5;
         println("Velocity scale:", vScale/100.0);
     }
-    
+
     // Creative Feature - Velocity max
     if (key == '-' && vMax > 0) {
         vMax--;
@@ -147,5 +199,14 @@ void keyPressed() {
     } else if (key == '+') {
         vMax++;
         println("Velocity Max:", vMax);
+    }
+
+    // Creative Feature - Colour mode
+    if (key == 'd' && colourMode < 4) {
+        colourMode++;
+        println("Colour Mode:", colourMode);
+    } else if (key == 'a' && colourMode > 0) {
+        colourMode--;
+        println("Colour Mode:", colourMode);
     }
 }
