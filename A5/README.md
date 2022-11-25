@@ -14,7 +14,7 @@ Window size can be adjusted in the `A5.pde` file, simply change the `size(x, y, 
 
 ## Creative Feature
 
-For my creative feature, I added controls for the initial gas distribution chance, max/min starting velocity, a runtime velocity scale, and a reset button.
+For my creative feature, I added controls for the initial gas distribution chance, max/min starting velocity, a runtime velocity scale, a colour mode setting, and a reset button.
 
 ### Controls:
 
@@ -24,13 +24,23 @@ R/r - increases/decreases the chance that gas will be placed in any given cell (
 
 +/- - increases/decreases the max/min velocity that a cell can start with (defaults to 3) (applied during initialization)
 
+d/a - increases/decreases the colour mode (applied during runtime)
+
 S/s - increases/decreases the velocity scale that takes effect when determining the resulting position of gas (defaults to 1) (applied during runtime)
+
+### Colour Modes:
+
+0 - default
+1 - heat map
+2 - aqua
+3 - white rainbow
+4 - black rainbow
 
 ---
 
-The before / after for my creative feature is most easily visualized in the diffs for commits [44faaeaa70242ea112ce963ff09d6de8d1f54e20](https://github.com/NicholasBolen/408/commit/44faaeaa70242ea112ce963ff09d6de8d1f54e20) and [e034eac9693007103d5e0058b00bafbc346364ef](https://github.com/NicholasBolen/408/commit/e034eac9693007103d5e0058b00bafbc346364ef), but there are also comments in my code around the applicable areas beginnning with "Create Feature". Here is a summary:
+The before / after for my creative feature is most easily visualized in the diffs for commits [44faaeaa70242ea112ce963ff09d6de8d1f54e20](https://github.com/NicholasBolen/408/commit/44faaeaa70242ea112ce963ff09d6de8d1f54e20), [e034eac9693007103d5e0058b00bafbc346364ef](https://github.com/NicholasBolen/408/commit/e034eac9693007103d5e0058b00bafbc346364ef), and [8f2c09436d3de41d3e92210babd2949359008a65](https://github.com/NicholasBolen/408/commit/8f2c09436d3de41d3e92210babd2949359008a65), but there are also comments in my code around the applicable areas beginnning with "Create Feature". Here is a summary:
 
-There were a few additional controller variables added (`gasP`, `vScale`, and `vMax`).
+There were a few additional controller variables added (`gasP`, `vScale`, `vMax`, and `colourMode`).
 
 I had to add the `keyPressed()` function to support controlling the new gas, velocity scale, and velocity max controllers. As well, I added the control for restarting & reinitializing the simulation.
 
