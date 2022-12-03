@@ -7,13 +7,32 @@ float angle = 0, rotX = 0, rotY = 0;
 ArrayList<Particle> sand = new ArrayList<>();
 PVector emitter;
 
+/*
+ TODO:
+ - Use sand bmp texture
+ - Add to poles based on closeness to each pole (weighted distribution of sand particles)
+ - Also add to diagonals when piling
+ - Adjustable emitter position
+ - Partially transparent fluffy brown balls for falling sand
+ 
+ Bugs:
+ - Screen rotation is janky
+ - Sand is not generated in centre of emitter
+ - Sand is not absorbed upon impact, but slightly after
+ 
+ Extra Features:
+ - Adjustable particle "worth", size, and speed
+ 
+ */
+
+
 // Init
 void setup()
 {
     size(810, 810, P3D);
     emitter = new PVector(width/2, -height/3, width/2);
     frameRate(30);
-    
+
     // Run with 1/10th the size (too computationally expensive otherwise)
     height /= 10;
     width /= 10;
