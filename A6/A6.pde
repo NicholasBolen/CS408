@@ -3,34 +3,17 @@
 // #200455709
 
 float[][] sandPile;
-float angle = 0, rotX = 0, rotY = 0;
 ArrayList<Particle> sand = new ArrayList<>();
 PVector emitter, emitterC;
 PImage sandTexture;
-
-/*
- TODO:
- - Add to poles based on closeness to each pole (weighted distribution of sand particles)
- - Also add to diagonals when piling
- - Partially transparent fluffy brown balls for falling sand
- 
- Bugs:
- - Sand is not generated in centre of emitter
- - Sand is not absorbed upon impact, but slightly after
- 
- Extra Features:
- - Adjustable particle "worth", size, and speed
- 
- */
-
 
 // Init
 void setup()
 {
     size(810, 810, P3D);
-    frameRate(30);
+    frameRate(100);
     sandTexture = loadImage("sand.bmp");
-    
+
     // Emitter position and controller
     emitter = new PVector(0, -height/3, 0);
     emitterC = new PVector();
@@ -45,57 +28,56 @@ void setup()
 void draw()
 {
     // Move emitter
+    if (emitter.x <= -410 && emitterC.x < 0) emitterC.x = 0;
+    if (emitter.x >= 394 && emitterC.x > 0) emitterC.x = 0;
+    if (emitter.z <= -410 && emitterC.z < 0) emitterC.z = 0;
+    if (emitter.z >= 394 && emitterC.z > 0) emitterC.z = 0;
     emitter.x += emitterC.x;
     emitter.y += emitterC.y;
     emitter.z += emitterC.z;
-    
+
     // Black background
     background(0);
     lights();
-    
+
     // Find origin
     translate(0, 30*height/4, -height*10);
     translate(height*5, 0, height*5);
-    
-    // Apply rotation
-    rotateX(rotX);
-    rotateY(rotY);
-    
+
     // Draw sand pile
+    fill(255);
     noStroke();
-    fill(128, 64, 0, 255);
     drawSand();
-    
-    // Emitter
+
+    // Draw emitter
+    noFill();
+    stroke(255);
+    strokeWeight(1);
     pushMatrix();
     translate(emitter.x, emitter.y, emitter.z);
-    noFill();
-    strokeWeight(1);
     box(50);    // emitter
-    fill(255);
     popMatrix();
+
     // Add sand particle
     if (frameCount % 30 == 0)
         sand.add(new Particle(emitter.x, emitter.y, emitter.z));
 
-
     // Draw falling sand
-    translate(0, -height*5, 0);
     for (Particle p : sand) {
         pushMatrix();
-        translate(p.position.x, p.position.y + 400, p.position.z);
+        translate(p.position.x, p.position.y, p.position.z);
+        noStroke();
         // partially transparent brown balls
-        fill(128, 64, 0, 255);
+        fill(105, 80, 47, 200);
         sphere(p.size);
         popMatrix();
     }
-
-
 
     // Update all sand
     updateSand();
 }
 
+// Function that smooths sandpile, absorbs falling sand, and moves falling sand particles
 void updateSand() {
     // Sand spread
     for (int i = 0; i < sandPile.length; i++) {
@@ -134,26 +116,39 @@ void updateSand() {
     // Move & absorb sand
     int i = 0;
     ArrayList<Particle> c = new ArrayList<>(sand);
+
     for (Particle p : c) {
         // Move
         p.position.y += p.speed;
+        // Match origins (-405, -405 => 0, 0)
+        p.position.x += height*5;
+        p.position.z += height*5;
 
         // Find surrounding squares
-        if (sandPile[int(p.position.x/10)][int(p.position.z/10)] < p.position.y ||
-            sandPile[int(p.position.x/10)+1][int(p.position.z/10)] < p.position.y ||
-            sandPile[int(p.position.x/10)+1][int(p.position.z/10)+1] < p.position.y ||
-            sandPile[int(p.position.x/10)][int(p.position.z/10)+1] < p.position.y) {
-            sandPile[int(p.position.x/10)][int(p.position.z/10)] += 1;
-            sandPile[int(p.position.x/10)+1][int(p.position.z/10)] += 1;
-            sandPile[int(p.position.x/10)+1][int(p.position.z/10)+1] += 1;
-            sandPile[int(p.position.x/10)][int(p.position.z/10)+1] += 1;
+        if (
+            0 <= p.position.y + sandPile[int(p.position.x/10)][int(p.position.z/10)] ||
+            0 <= p.position.y + sandPile[int(p.position.x/10)+1][int(p.position.z/10)] ||
+            0 <= p.position.y + sandPile[int(p.position.x/10)+1][int(p.position.z/10)+1] ||
+            0 <= p.position.y + sandPile[int(p.position.x/10)][int(p.position.z/10)+1]
+            ) {
+            // Distribute weight by closeness to poles
+            float xR = p.position.x/10 - int(p.position.x/10);
+            float zR = p.position.z/10 - int(p.position.z/10);
+            sandPile[int(p.position.x/10)][int(p.position.z/10)] += p.size * ((2 - xR - zR)/2);
+            sandPile[int(p.position.x/10)+1][int(p.position.z/10)] += p.size * ((xR + 1 - zR)/2);
+            sandPile[int(p.position.x/10)+1][int(p.position.z/10)+1] += p.size * ((xR + zR)/2);
+            sandPile[int(p.position.x/10)][int(p.position.z/10)+1] += p.size * ((1 - xR + zR)/2);
+            // Remove particle
             sand.remove(i);
         }
+        // Restore coordinates (0, 0 => -405, -405)
+        p.position.x -= height*5;
+        p.position.z -= height*5;
         i++;
     }
 }
 
-// Draws sand pile
+// Draw sand pile
 void drawSand() {
     pushMatrix();
     translate(-height*5, 0, -height*5);
@@ -172,6 +167,7 @@ void drawSand() {
     popMatrix();
 }
 
+// Detect keypresses
 void keyPressed() {
     // Move emitter
     if (key == 'w')
@@ -184,16 +180,11 @@ void keyPressed() {
         emitterC.x = 1;
 }
 
+// Detect keyreleases
 void keyReleased() {
     // Move emitter
     if (key == 'w' || key == 's')
         emitterC.z = 0;
     if (key == 'a' || key == 'd')
         emitterC.x = 0;
-}
-
-void mouseDragged() {
-    // rotate the viewport
-    rotX=((float)mouseY/(float)width)*PI;
-    rotY=-((float)mouseX/(float)height)*PI;
 }

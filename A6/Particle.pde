@@ -9,7 +9,7 @@ class Particle {
     // Default constructor
     Particle(float x, float y, float z) {
         position = new PVector(x, y, z);
-        size = 2;
+        size = 5;
         speed = 5;
     }
 
