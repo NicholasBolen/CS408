@@ -5,18 +5,16 @@
 float[][] sandPile;
 float angle = 0, rotX = 0, rotY = 0;
 ArrayList<Particle> sand = new ArrayList<>();
-PVector emitter;
+PVector emitter, emitterC;
+PImage sandTexture;
 
 /*
  TODO:
- - Use sand bmp texture
  - Add to poles based on closeness to each pole (weighted distribution of sand particles)
  - Also add to diagonals when piling
- - Adjustable emitter position
  - Partially transparent fluffy brown balls for falling sand
  
  Bugs:
- - Screen rotation is janky
  - Sand is not generated in centre of emitter
  - Sand is not absorbed upon impact, but slightly after
  
@@ -30,8 +28,12 @@ PVector emitter;
 void setup()
 {
     size(810, 810, P3D);
-    emitter = new PVector(width/2, -height/3, width/2);
     frameRate(30);
+    sandTexture = loadImage("sand.bmp");
+    
+    // Emitter position and controller
+    emitter = new PVector(0, -height/3, 0);
+    emitterC = new PVector();
 
     // Run with 1/10th the size (too computationally expensive otherwise)
     height /= 10;
@@ -42,24 +44,33 @@ void setup()
 // Draw on each frame
 void draw()
 {
+    // Move emitter
+    emitter.x += emitterC.x;
+    emitter.y += emitterC.y;
+    emitter.z += emitterC.z;
+    
     // Black background
     background(0);
     lights();
-    stroke(255);
+    
+    // Find origin
+    translate(0, 30*height/4, -height*10);
+    translate(height*5, 0, height*5);
+    
+    // Apply rotation
     rotateX(rotX);
     rotateY(rotY);
-    ortho();
-
-    // Top left of grid
-    translate(0, 30*height/4, -height*10);
-
+    
     // Draw sand pile
+    noStroke();
+    fill(128, 64, 0, 255);
     drawSand();
-
+    
     // Emitter
     pushMatrix();
     translate(emitter.x, emitter.y, emitter.z);
     noFill();
+    strokeWeight(1);
     box(50);    // emitter
     fill(255);
     popMatrix();
@@ -67,14 +78,19 @@ void draw()
     if (frameCount % 30 == 0)
         sand.add(new Particle(emitter.x, emitter.y, emitter.z));
 
+
     // Draw falling sand
     translate(0, -height*5, 0);
     for (Particle p : sand) {
         pushMatrix();
         translate(p.position.x, p.position.y + 400, p.position.z);
+        // partially transparent brown balls
+        fill(128, 64, 0, 255);
         sphere(p.size);
         popMatrix();
     }
+
+
 
     // Update all sand
     updateSand();
@@ -139,21 +155,45 @@ void updateSand() {
 
 // Draws sand pile
 void drawSand() {
+    pushMatrix();
+    translate(-height*5, 0, -height*5);
+    textureMode(NORMAL);
     for (int i = 0; i < sandPile.length - 1; i++) {
         for (int j = 0; j < sandPile[0].length - 1; j++) {
             beginShape();
-            vertex(i*10, -sandPile[i][j], j*10);
-            vertex(i*10+10, -sandPile[i+1][j], j*10);
-            vertex(i*10+10, -sandPile[i+1][j+1], j*10+10);
-            vertex(i*10, -sandPile[i][j+1], j*10+10);
+            texture(sandTexture);
+            vertex(i*10, -sandPile[i][j], j*10, i/(sandPile.length - 1.0), j/(sandPile[0].length - 1.0));
+            vertex(i*10+10, -sandPile[i+1][j], j*10, (i+1)/(sandPile.length - 1.0), j/(sandPile[0].length - 1.0));
+            vertex(i*10+10, -sandPile[i+1][j+1], j*10+10, (i+1)/(sandPile.length - 1.0), (j+1)/(sandPile[0].length - 1.0));
+            vertex(i*10, -sandPile[i][j+1], j*10+10, i/(sandPile.length - 1.0), (j+1)/(sandPile[0].length - 1.0));
             endShape();
         }
     }
+    popMatrix();
 }
 
+void keyPressed() {
+    // Move emitter
+    if (key == 'w')
+        emitterC.z = -1;
+    if (key == 's')
+        emitterC.z = 1;
+    if (key == 'a')
+        emitterC.x = -1;
+    if (key == 'd')
+        emitterC.x = 1;
+}
+
+void keyReleased() {
+    // Move emitter
+    if (key == 'w' || key == 's')
+        emitterC.z = 0;
+    if (key == 'a' || key == 'd')
+        emitterC.x = 0;
+}
 
 void mouseDragged() {
     // rotate the viewport
-    rotX=((float)mouseX/(float)width)*2*PI;
-    rotY=((float)mouseY/(float)height)*2*PI;
+    rotX=((float)mouseY/(float)width)*PI;
+    rotY=-((float)mouseX/(float)height)*PI;
 }
