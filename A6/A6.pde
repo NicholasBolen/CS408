@@ -3,6 +3,8 @@
 // #200455709
 
 float[][] sandPile;
+float rotX = 0, rotY = 0, zoom = 1;    // Creative Feature - rotate and zoom scene
+float size = 5, weight = 5;    // Creative Feature - particle size and weight
 ArrayList<Particle> sand = new ArrayList<>();
 PVector emitter, emitterC;
 PImage sandTexture;
@@ -11,7 +13,7 @@ PImage sandTexture;
 void setup()
 {
     size(810, 810, P3D);
-    frameRate(100);
+    frameRate(60);
     sandTexture = loadImage("sand.bmp");
 
     // Emitter position and controller
@@ -44,6 +46,11 @@ void draw()
     translate(0, 30*height/4, -height*10);
     translate(height*5, 0, height*5);
 
+    // Creative Feature - Rotate scene
+    scale(zoom);
+    rotateX(rotX);
+    rotateY(rotY);
+
     // Draw sand pile
     fill(255);
     noStroke();
@@ -69,7 +76,7 @@ void draw()
         noStroke();
         // partially transparent brown balls
         fill(105, 80, 47, 200);
-        sphere(p.size);
+        sphere(size);
         popMatrix();
     }
 
@@ -77,7 +84,7 @@ void draw()
     updateSand();
 }
 
-// Function that smooths sandpile, absorbs falling sand, and moves falling sand particles
+// Function that smooths sandpile, absorbs falling sand, and moves falling sand particles 
 void updateSand() {
     // Sand spread
     for (int i = 0; i < sandPile.length; i++) {
@@ -119,7 +126,7 @@ void updateSand() {
 
     for (Particle p : c) {
         // Move
-        p.position.y += p.speed;
+        p.position.y += 5;
         // Match origins (-405, -405 => 0, 0)
         p.position.x += height*5;
         p.position.z += height*5;
@@ -134,10 +141,10 @@ void updateSand() {
             // Distribute weight by closeness to poles
             float xR = p.position.x/10 - int(p.position.x/10);
             float zR = p.position.z/10 - int(p.position.z/10);
-            sandPile[int(p.position.x/10)][int(p.position.z/10)] += p.size * ((2 - xR - zR)/2);
-            sandPile[int(p.position.x/10)+1][int(p.position.z/10)] += p.size * ((xR + 1 - zR)/2);
-            sandPile[int(p.position.x/10)+1][int(p.position.z/10)+1] += p.size * ((xR + zR)/2);
-            sandPile[int(p.position.x/10)][int(p.position.z/10)+1] += p.size * ((1 - xR + zR)/2);
+            sandPile[int(p.position.x/10)][int(p.position.z/10)] += weight * ((2 - xR - zR)/2);
+            sandPile[int(p.position.x/10)+1][int(p.position.z/10)] += weight * ((xR + 1 - zR)/2);
+            sandPile[int(p.position.x/10)+1][int(p.position.z/10)+1] += weight * ((xR + zR)/2);
+            sandPile[int(p.position.x/10)][int(p.position.z/10)+1] += weight * ((1 - xR + zR)/2);
             // Remove particle
             sand.remove(i);
         }
@@ -178,6 +185,31 @@ void keyPressed() {
         emitterC.x = -1;
     if (key == 'd')
         emitterC.x = 1;
+    
+    // Creative Feature - zoom in/out
+    if (key == '+')
+        zoom += 0.5;
+    if (key == '-')
+        zoom -= 0.5;
+        
+    // Creative Feature - reset
+    if (key == '0') {
+        frameCount = 0;
+        sandPile = new float[height][width];
+        sand = new ArrayList<>();
+    }
+    
+    // Creative Feature - control sand size
+    if (key == 'X')
+        size++;
+    else if (key == 'x' && size > 0)
+        size--;
+    
+    // Creative Feature - control sand weight/worth
+    if (key == 'C')
+        weight++;
+    else if (key == 'c' && weight > 0)
+        weight--; 
 }
 
 // Detect keyreleases
@@ -187,4 +219,11 @@ void keyReleased() {
         emitterC.z = 0;
     if (key == 'a' || key == 'd')
         emitterC.x = 0;
+}
+
+// Creative Feature - rotate scene with mouse
+void mouseDragged() {
+    // rotate the viewport
+    rotX = ((float)mouseY/(float)width)*PI;
+    rotY = -((float)mouseX/(float)height)*PI;
 }
