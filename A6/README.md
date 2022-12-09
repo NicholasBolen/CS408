@@ -27,7 +27,7 @@ C/C - increase/decrease the falling sand particle weight
 
 ---
 
-The before / after for my creative feature is most easily visualized in the diff for commit [44faaeaa70242ea112ce963ff09d6de8d1f54e20](https://github.com/NicholasBolen/408/commit/44faaeaa70242ea112ce963ff09d6de8d1f54e20), but there are also comments in my code around the applicable areas beginnning with "Create Feature". Here is a summary:
+The before / after for my creative feature is most easily visualized in the diff for commit [7e9fdc7b8c3749f75813faa5e11f0098a09746ff](https://github.com/NicholasBolen/408/commit/7e9fdc7b8c3749f75813faa5e11f0098a09746ff), but there are also comments in my code around the applicable areas beginnning with "Create Feature". Here is a summary:
 
 There were a few additional controller variables added (`rotX`, `rotY`, `zoom`, `size`, and `weight`).
 
